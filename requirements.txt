@@ -1,0 +1,13 @@
+beautifulsoup4
+requests
+pandas
+lxml
+openpyxl
+feedparser
+torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu
+transformers==4.36.2
+numpy
+scikit-learn
+matplotlib
+seaborn
+imbalanced-learn
