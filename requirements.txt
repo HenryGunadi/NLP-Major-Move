@@ -6,8 +6,9 @@ openpyxl
 feedparser
 torch==2.1.2 --index-url https://download.pytorch.org/whl/cpu
 transformers==4.36.2
-numpy
+numpy==1.26.4
 scikit-learn
 matplotlib
 seaborn
 imbalanced-learn
+datasets
