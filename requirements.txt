@@ -12,3 +12,7 @@ matplotlib
 seaborn
 imbalanced-learn
 datasets
+fastapi
+uvicorn
+pydantic-settings
+httpx
