@@ -10,6 +10,9 @@ class ModelPrediction(BaseModel):
 class PredictRequest(BaseModel):
   stock_symbol: str
 
+class SetModelRequest(BaseModel):
+  model_name: str
+
 class PredictResponse(BaseModel):
-  data: dict
+  data: List[dict]
   message: str

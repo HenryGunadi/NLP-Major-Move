@@ -53,14 +53,74 @@ class NewsAPI:
     
     except Exception as e:
       print(f"{self.__class__.__name__} format_news() error : {str(e)}")
-
+      
+class BaseModel:
+  def predict(self, text):
+    raise NotImplementedError
     
-class MachineLearningModel:
-  def __init__(self, model):
+class MLogistic(BaseModel):
+  def __init__(self, model, vectorizer):
     self.model = model
-
-  def predict(self, data) -> List[dict]:
+    self.vectorizer = vectorizer
+    
+  def predict(self, text):
     try:
-      return []
+      pass
     except Exception as e:
       print(f"{self.__class__.__name__} predict() error : {str(e)}")
+
+class NaiveBayes(BaseModel):
+  def __init__(self, model, vectorizer):
+    self.model = model
+    self.vectorizer = vectorizer
+    
+  def predict(self, text):
+    try:
+      pass
+    except Exception as e:
+      print(f"{self.__class__.__name__} predict() error : {str(e)}")
+
+class RandomForest(BaseModel):
+  def __init__(self, model, vectorizer):
+    self.model = model
+    self.vectorizer = vectorizer
+    
+  def predict(self, text):
+    try:
+      pass
+    except Exception as e:
+      print(f"{self.__class__.__name__} predict() error : {str(e)}")
+
+class ModelManager:
+    def __init__(self):
+        self.current_model = None
+        self.current_model_name = None 
+
+    def set_model(self, model_name: str):
+        if model_name == self.current_model_name:
+          return self.current_model
+
+        match model_name:
+            case "mlogistic":
+                self.current_model = MLogistic(
+                  model=None,
+                  vectorizer=None
+                )
+            case "nb":
+                self.current_model = NaiveBayes(
+                  model=None,
+                  vectorizer=None
+                )
+            case "rf":
+                self.current_model = RandomForest(
+                  model=None,
+                  vectorizer=None
+                )
+            case _:
+                raise ValueError("Unknown model")
+
+        self.current_model_name = model_name
+        return self.current_model
+
+    def predict(self, text):
+        return self.current_model.predict(text)

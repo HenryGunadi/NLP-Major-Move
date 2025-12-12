@@ -1,13 +1,13 @@
 from fastapi import APIRouter
-from schemas import PredictResponse, PredictRequest
-from classes import NewsAPI, MachineLearningModel
+from schemas import PredictResponse, PredictRequest, SetModelRequest
+from classes import NewsAPI, ModelManager
 from utils import safe_get
 
 class MainRoute():
-    def __init__(self, news_api_service: NewsAPI, model_service: MachineLearningModel):
+    def __init__(self, news_api_service: NewsAPI, model_manager: ModelManager):
         self.router = APIRouter()
         self.news_api_service = news_api_service
-        self.model_service = model_service
+        self.model_manager = model_manager
     
         @self.router.post("/predict", response_model=PredictResponse)
         async def predict(payload: PredictRequest):
@@ -29,10 +29,10 @@ class MainRoute():
                 print("Formatted data : ", formatted_data)
 
                 # do model prediction here
-                prediction_result = model_service.predict(formatted_data)
+                prediction_result = model_manager.predict(formatted_data)
 
                 return PredictResponse(
-                    data=data,
+                    data=[{}],
                     message="Success"
                 )
             except Exception as e:
@@ -41,3 +41,15 @@ class MainRoute():
                     data=[],
                     message=f"Error : {str(e)}"
                 )
+
+        @self.router.post("/set_model")
+        async def set_model(payload: SetModelRequest):
+            try:
+                model_manager.set_model(
+                    model_name=payload.model_name
+                )
+                
+                return {"message": "Success"}
+            except Exception as e:
+                print(f"Predict route error : {str(e)}")
+                return {"message": f"Error : {str(e)}"}

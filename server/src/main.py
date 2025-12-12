@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import MainRoute
-from classes import NewsAPI, MachineLearningModel
+from classes import NewsAPI, ModelManager, NaiveBayes, MLogistic, RandomForest
 import uvicorn
 from config import config
 
@@ -10,12 +10,14 @@ news_api_service = NewsAPI(
    api_key=config.get_news_api_token,
    base_url=config.NEWS_API_BASE_URL
 )
-model_sevice = MachineLearningModel(None)
+
+# model manager (set default model)
+model_manager = ModelManager() 
 
 # routers
 main_router = MainRoute(
    news_api_service=news_api_service,
-   model_service=model_sevice
+   model_manager=model_manager
 )
 
 app = FastAPI(title="Basic FastAPI Setup")

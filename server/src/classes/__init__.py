@@ -1,1 +1,1 @@
-from .classes import NewsAPI, MachineLearningModel
+from .classes import *
