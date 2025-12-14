@@ -14,6 +14,9 @@ news_api_service = NewsAPI(
 # model manager (set default model)
 model_manager = ModelManager() 
 
+# default model
+# model_manager.set_model("mlogistic")
+
 # routers
 main_router = MainRoute(
    news_api_service=news_api_service,
@@ -29,7 +32,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],  

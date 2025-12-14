@@ -4,7 +4,7 @@ from typing import List, Literal
 class ModelPrediction(BaseModel):
   headline: str
   source: str | None
-  importance: float
+  importance: str
   sentiment: Literal["positive", "neutral", "negative"]
 
 class PredictRequest(BaseModel):

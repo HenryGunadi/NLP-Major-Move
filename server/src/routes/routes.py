@@ -28,11 +28,18 @@ class MainRoute():
                 formatted_data = self.news_api_service.format_news(filtered_data)
                 print("Formatted data : ", formatted_data)
 
-                # do model prediction here
-                prediction_result = model_manager.predict(formatted_data)
+                # do model prediction on the news
+                result = []
 
+                for headline in formatted_data:
+                    prediction_result = model_manager.predict(headline.get("headline", ""))
+                    prediction_result["source"] = headline.get("source", None)
+
+                    print("Prediction result : ", prediction_result)
+
+                    result.append(prediction_result)
                 return PredictResponse(
-                    data=[{}],
+                    data=result,
                     message="Success"
                 )
             except Exception as e:

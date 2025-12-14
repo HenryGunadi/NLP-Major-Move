@@ -1,6 +1,10 @@
 import httpx
 from typing import List
-from utils import safe_get, clean_text
+from utils import safe_get, clean_text, load_model
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+MODEL_PATH = BASE_DIR / "models"
 
 class NewsAPI:
   def __init__(self, api_key: str, base_url: str):
@@ -42,8 +46,7 @@ class NewsAPI:
 
         source = safe_get(headline, "url", None)
         data_headline = {
-          "title": title,
-          "description": description,
+          "headline": f"{title}. {description}",
           "source": source
         }
 
@@ -58,21 +61,28 @@ class BaseModel:
   def predict(self, text):
     raise NotImplementedError
     
-class MLogistic(BaseModel):
-  def __init__(self, model, vectorizer):
-    self.model = model
-    self.vectorizer = vectorizer
-    
-  def predict(self, text):
-    try:
-      pass
-    except Exception as e:
-      print(f"{self.__class__.__name__} predict() error : {str(e)}")
+class MLogistic:
+    def __init__(self, bundle):
+        self.model = bundle["pipeline"]
+        self.sentiment_le = bundle["sentiment_encoder"]
+        self.importance_le = bundle["importance_encoder"]
+
+    def predict(self, text: str):
+        pred = self.model.predict([text])[0]
+
+        sentiment = self.sentiment_le.inverse_transform([pred[0]])[0]
+        importance = self.importance_le.inverse_transform([pred[1]])[0]
+
+        return {
+            "headline": text,
+            "sentiment": sentiment,
+            "importance": importance,
+        }
+
 
 class NaiveBayes(BaseModel):
-  def __init__(self, model, vectorizer):
+  def __init__(self, model):
     self.model = model
-    self.vectorizer = vectorizer
     
   def predict(self, text):
     try:
@@ -81,9 +91,8 @@ class NaiveBayes(BaseModel):
       print(f"{self.__class__.__name__} predict() error : {str(e)}")
 
 class RandomForest(BaseModel):
-  def __init__(self, model, vectorizer):
+  def __init__(self, model):
     self.model = model
-    self.vectorizer = vectorizer
     
   def predict(self, text):
     try:
@@ -103,24 +112,23 @@ class ModelManager:
         match model_name:
             case "mlogistic":
                 self.current_model = MLogistic(
-                  model=None,
-                  vectorizer=None
+                  bundle=load_model(MODEL_PATH / "MultinomialLogisticRegresion.pkl"),
                 )
+
+                print("Success initialized : mlogistic model")
             case "nb":
                 self.current_model = NaiveBayes(
                   model=None,
-                  vectorizer=None
                 )
             case "rf":
                 self.current_model = RandomForest(
                   model=None,
-                  vectorizer=None
                 )
             case _:
                 raise ValueError("Unknown model")
 
         self.current_model_name = model_name
         return self.current_model
-
+    
     def predict(self, text):
         return self.current_model.predict(text)
