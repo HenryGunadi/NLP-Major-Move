@@ -1,94 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MajorMove - Stock News Analysis System</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
-
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>
-            <h1>MajorMove</h1>
-            <p class="subtitle">Sistem Klasifikasi Berita Saham Berbasis NLP untuk Deteksi Tingkat Kepentingan dan Analisis Sentimen</p>
-        </header>
+      <header>
+        <div class="header-content">
+          <h1>MajorMove</h1>
+          <div class="header-decoration"></div>
+        </div>
+        <p class="subtitle">
+          Sistem Klasifikasi Berita Saham Berbasis NLP untuk Deteksi Tingkat
+          Kepentingan dan Analisis Sentimen
+        </p>
+      </header>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="ticker">Ticker Symbol (pisahkan dengan koma untuk multiple tickers)</label>
-                <input type="text" id="ticker" placeholder="Contoh: AAPL, TSLA, GOOGL" value="AAPL">
-            </div>
-
-            <div class="input-group">
-                <label>Pilih Model Klasifikasi</label>
-                <div class="model-selection">
-                    <div class="model-card active" data-model="finbert">
-                        <h4>FinBERT</h4>
-                        <p>Deep Learning (15s)</p>
-                    </div>
-                    <div class="model-card" data-model="logistic">
-                        <h4>Logistic Regression</h4>
-                        <p>Traditional ML (5s)</p>
-                    </div>
-                    <div class="model-card" data-model="naive-bayes">
-                        <h4>Naive Bayes</h4>
-                        <p>Traditional ML (5s)</p>
-                    </div>
-                    <div class="model-card" data-model="random-forest">
-                        <h4>Random Forest</h4>
-                        <p>Traditional ML (5s)</p>
-                    </div>
-                </div>
-            </div>
-
-            <button class="analyze-btn" onclick="analyzeNews()">Analisis Berita</button>
+      <div class="input-section">
+        <div class="input-group">
+          <label for="ticker">Ticker Symbol</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="ticker"
+              placeholder="Contoh: AAPL, TSLA, GOOGL"
+              value="AAPL"
+            />
+            <span class="input-hint"
+              >Pisahkan dengan koma untuk multiple tickers</span
+            >
+          </div>
         </div>
 
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Mengambil dan menganalisis berita...</p>
+        <div class="input-group">
+          <label>Pilih Model Klasifikasi</label>
+          <div class="model-selection">
+            <div class="model-card active" data-model="finbert">
+              <div class="model-badge">Deep Learning</div>
+              <h4>FinBERT</h4>
+              <p class="model-time">~15s</p>
+            </div>
+            <div class="model-card" data-model="mlogistic">
+              <div class="model-badge">Traditional ML</div>
+              <h4>Multinomial Logistic</h4>
+              <p class="model-time">~5s</p>
+            </div>
+            <div class="model-card" data-model="nb">
+              <div class="model-badge">Traditional ML</div>
+              <h4>Naive Bayes</h4>
+              <p class="model-time">~5s</p>
+            </div>
+            <div class="model-card" data-model="rf">
+              <div class="model-badge">Traditional ML</div>
+              <h4>Random Forest</h4>
+              <p class="model-time">~5s</p>
+            </div>
+          </div>
         </div>
 
-        <div class="results-section">
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <h3>Total Berita</h3>
-                    <div class="value" id="totalNews">0</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Berita Major</h3>
-                    <div class="value" id="majorNews">0</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Sentimen</h3>
-                    <div class="value" id="sentimentScore">0.0</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Importance</h3>
-                    <div class="value" id="dominantSentiment">-</div>
-                </div>
-            </div>
+        <button class="analyze-btn" onclick="analyzeNews()">
+          <span>Analisis Berita</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
 
-            <div class="news-list">
-                <h2>Daftar Berita</h2>
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterNews('all')">Semua</button>
-                    <button class="filter-tab" onclick="filterNews('positive')">Positive</button>
-                    <button class="filter-tab" onclick="filterNews('negative')">Negative</button>
-                    <button class="filter-tab" onclick="filterNews('neutral')">Neutral</button>
-                </div>
-                <div id="newsList"></div>
-            </div>
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Mengambil dan menganalisis berita...</p>
+      </div>
 
-            <div class="export-section">
-                <h3>Export Hasil Analisis</h3>
-                <button class="export-btn" onclick="exportJSON()">Export JSON</button>
-                <button class="export-btn" onclick="exportCSV()">Export CSV</button>
-            </div>
+      <div class="results-section">
+        <div class="summary-cards">
+          <div class="summary-card">
+            <div class="card-icon">📊</div>
+            <h3>Total Berita</h3>
+            <div class="value" id="totalNews">0</div>
+          </div>
+          <div class="summary-card">
+            <div class="card-icon">⚡</div>
+            <h3>Berita Major</h3>
+            <div class="value" id="majorNews">0</div>
+          </div>
+          <div class="summary-card">
+            <div class="card-icon">📈</div>
+            <h3>Sentiment Score</h3>
+            <div class="value" id="sentimentScore">0.0</div>
+          </div>
+          <div class="summary-card">
+            <div class="card-icon">🎯</div>
+            <h3>Overall Sentiment</h3>
+            <div class="value" id="dominantSentiment">-</div>
+          </div>
         </div>
+
+        <div class="news-list">
+          <div class="news-list-header">
+            <h2>Daftar Berita</h2>
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="filterNews('all')">
+                Semua
+              </button>
+              <button class="filter-tab" onclick="filterNews('positive')">
+                Positive
+              </button>
+              <button class="filter-tab" onclick="filterNews('negative')">
+                Negative
+              </button>
+              <button class="filter-tab" onclick="filterNews('neutral')">
+                Neutral
+              </button>
+            </div>
+          </div>
+          <div id="newsList"></div>
+        </div>
+
+        <div class="export-section">
+          <h3>Export Hasil Analisis</h3>
+          <div class="export-buttons">
+            <button class="export-btn" onclick="exportJSON()">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export JSON
+            </button>
+            <button class="export-btn" onclick="exportCSV()">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>
