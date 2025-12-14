@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MajorMove - Stock News Analysis System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MajorMove</h1>
+            <p class="subtitle">Sistem Klasifikasi Berita Saham Berbasis NLP untuk Deteksi Tingkat Kepentingan dan Analisis Sentimen</p>
+        </header>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="ticker">Ticker Symbol (pisahkan dengan koma untuk multiple tickers)</label>
+                <input type="text" id="ticker" placeholder="Contoh: AAPL, TSLA, GOOGL" value="AAPL">
+            </div>
+
+            <div class="input-group">
+                <label>Pilih Model Klasifikasi</label>
+                <div class="model-selection">
+                    <div class="model-card active" data-model="finbert">
+                        <h4>FinBERT</h4>
+                        <p>Deep Learning (15s)</p>
+                    </div>
+                    <div class="model-card" data-model="logistic">
+                        <h4>Logistic Regression</h4>
+                        <p>Traditional ML (5s)</p>
+                    </div>
+                    <div class="model-card" data-model="naive-bayes">
+                        <h4>Naive Bayes</h4>
+                        <p>Traditional ML (5s)</p>
+                    </div>
+                    <div class="model-card" data-model="random-forest">
+                        <h4>Random Forest</h4>
+                        <p>Traditional ML (5s)</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="analyze-btn" onclick="analyzeNews()">Analisis Berita</button>
+        </div>
+
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Mengambil dan menganalisis berita...</p>
+        </div>
+
+        <div class="results-section">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Berita</h3>
+                    <div class="value" id="totalNews">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Berita Major</h3>
+                    <div class="value" id="majorNews">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Sentimen</h3>
+                    <div class="value" id="sentimentScore">0.0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Importance</h3>
+                    <div class="value" id="dominantSentiment">-</div>
+                </div>
+            </div>
+
+            <div class="news-list">
+                <h2>Daftar Berita</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterNews('all')">Semua</button>
+                    <button class="filter-tab" onclick="filterNews('positive')">Positive</button>
+                    <button class="filter-tab" onclick="filterNews('negative')">Negative</button>
+                    <button class="filter-tab" onclick="filterNews('neutral')">Neutral</button>
+                </div>
+                <div id="newsList"></div>
+            </div>
+
+            <div class="export-section">
+                <h3>Export Hasil Analisis</h3>
+                <button class="export-btn" onclick="exportJSON()">Export JSON</button>
+                <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
