@@ -1,13 +1,13 @@
 from fastapi import APIRouter
-from schemas import PredictResponse, PredictRequest, SetModelRequest
-from classes import NewsAPI, ModelManager
+from schemas import PredictResponse, PredictRequest
+from classes import NewsAPI, FinBERT
 from utils import safe_get
 
 class MainRoute():
-    def __init__(self, news_api_service: NewsAPI, model_manager: ModelManager):
+    def __init__(self, news_api_service: NewsAPI, model: FinBERT):
         self.router = APIRouter()
         self.news_api_service = news_api_service
-        self.model_manager = model_manager
+        self.model = model
     
         @self.router.post("/predict", response_model=PredictResponse)
         async def predict(payload: PredictRequest):
@@ -19,25 +19,27 @@ class MainRoute():
                 if data is None:
                     return PredictResponse(
                         data=[],
-                        message="No news is found."
+                        message="No news found for this stock symbol."
                     )
                 
                 filtered_data = safe_get(data, "data")
-                # print("Filtered data : ", filtered_data)
 
                 formatted_data = self.news_api_service.format_news(filtered_data)
-                print("Formatted data : ", formatted_data)
+                print(f"Found {len(formatted_data)} news articles")
 
-                # do model prediction on the news
+                # Run FinBERT prediction on each headline
                 result = []
 
-                for headline in formatted_data:
-                    prediction_result = model_manager.predict(headline.get("headline", ""))
-                    prediction_result["source"] = headline.get("source", None)
-
-                    print("Prediction result : ", prediction_result)
+                for headline_data in formatted_data:
+                    headline_text = headline_data.get("text", "")
+                    if not headline_text:
+                        continue
+                    
+                    prediction_result = self.model.predict(headline_text)
+                    prediction_result["source"] = headline_data.get("source", None)
 
                     result.append(prediction_result)
+                
                 return PredictResponse(
                     data=result,
                     message="Success"
@@ -48,15 +50,3 @@ class MainRoute():
                     data=[],
                     message=f"Error : {str(e)}"
                 )
-
-        @self.router.post("/set_model")
-        async def set_model(payload: SetModelRequest):
-            try:
-                model_manager.set_model(
-                    model_name=payload.model_name
-                )
-                
-                return {"message": "Success"}
-            except Exception as e:
-                print(f"Predict route error : {str(e)}")
-                return {"message": f"Error : {str(e)}"}

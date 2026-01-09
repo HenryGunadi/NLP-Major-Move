@@ -97,8 +97,35 @@ h1 {
   font-size: 1.1rem;
   color: var(--color-text-muted);
   max-width: 700px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   font-weight: 400;
+}
+
+.model-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.model-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  background: rgba(74, 158, 255, 0.2);
+  color: var(--color-primary);
+  border-radius: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(74, 158, 255, 0.3);
+}
+
+.model-name {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
 /* Input Section */
@@ -112,7 +139,7 @@ h1 {
 }
 
 .input-group {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .input-group:last-child {
@@ -159,77 +186,6 @@ input[type="text"]:focus {
   font-style: italic;
 }
 
-/* Model Selection */
-.model-selection {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.model-card {
-  background: var(--color-surface-light);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 24px;
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.model-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.model-card:hover {
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.model-card.active {
-  border-color: var(--color-primary);
-  background: rgba(74, 158, 255, 0.1);
-}
-
-.model-card.active::before {
-  transform: scaleX(1);
-}
-
-.model-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  padding: 4px 10px;
-  background: rgba(74, 158, 255, 0.2);
-  color: var(--color-primary);
-  border-radius: 20px;
-  margin-bottom: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.model-card h4 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-.model-time {
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  margin: 0;
-}
-
 /* Analyze Button */
 .analyze-btn {
   width: 100%;
@@ -251,7 +207,7 @@ input[type="text"]:focus {
   justify-content: center;
   gap: 12px;
   box-shadow: var(--shadow-sm);
-  margin-top: 32px;
+  margin-top: 24px;
   font-family: var(--font-body);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -551,6 +507,17 @@ input[type="text"]:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-score {
+  font-weight: 700;
+  opacity: 0.9;
+  font-size: 0.7rem;
+  padding-left: 6px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .badge-positive {
@@ -647,6 +614,11 @@ input[type="text"]:focus {
     font-size: 1rem;
   }
 
+  .model-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .input-section,
   .news-list,
   .export-section {
@@ -663,10 +635,6 @@ input[type="text"]:focus {
 
   .summary-card .value {
     font-size: 2rem;
-  }
-
-  .model-selection {
-    grid-template-columns: 1fr;
   }
 
   .news-list-header {

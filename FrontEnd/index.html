@@ -24,6 +24,10 @@
           Sistem Klasifikasi Berita Saham Berbasis NLP untuk Deteksi Tingkat
           Kepentingan dan Analisis Sentimen
         </p>
+        <div class="model-info">
+          <span class="model-badge">Deep Learning</span>
+          <span class="model-name">Powered by FinBERT</span>
+        </div>
       </header>
 
       <div class="input-section">
@@ -39,32 +43,6 @@
             <span class="input-hint"
               >Pisahkan dengan koma untuk multiple tickers</span
             >
-          </div>
-        </div>
-
-        <div class="input-group">
-          <label>Pilih Model Klasifikasi</label>
-          <div class="model-selection">
-            <div class="model-card active" data-model="finbert">
-              <div class="model-badge">Deep Learning</div>
-              <h4>FinBERT</h4>
-              <p class="model-time">~15s</p>
-            </div>
-            <div class="model-card" data-model="mlogistic">
-              <div class="model-badge">Traditional ML</div>
-              <h4>Multinomial Logistic</h4>
-              <p class="model-time">~5s</p>
-            </div>
-            <div class="model-card" data-model="nb">
-              <div class="model-badge">Traditional ML</div>
-              <h4>Naive Bayes</h4>
-              <p class="model-time">~5s</p>
-            </div>
-            <div class="model-card" data-model="rf">
-              <div class="model-badge">Traditional ML</div>
-              <h4>Random Forest</h4>
-              <p class="model-time">~5s</p>
-            </div>
           </div>
         </div>
 
@@ -86,7 +64,7 @@
 
       <div class="loading">
         <div class="spinner"></div>
-        <p>Mengambil dan menganalisis berita...</p>
+        <p>Mengambil dan menganalisis berita dengan FinBERT...</p>
       </div>
 
       <div class="results-section">
@@ -98,7 +76,7 @@
           </div>
           <div class="summary-card">
             <div class="card-icon">⚡</div>
-            <h3>Berita Major</h3>
+            <h3>Berita Penting</h3>
             <div class="value" id="majorNews">0</div>
           </div>
           <div class="summary-card">

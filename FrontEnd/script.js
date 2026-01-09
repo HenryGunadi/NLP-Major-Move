@@ -1,17 +1,5 @@
 let currentData = null;
-let selectedModel = "finbert";
-BASE_PATH = "http://127.0.0.1:8000/api";
-
-// Model selection
-document.querySelectorAll(".model-card").forEach((card) => {
-  card.addEventListener("click", function () {
-    document
-      .querySelectorAll(".model-card")
-      .forEach((c) => c.classList.remove("active"));
-    this.classList.add("active");
-    selectedModel = this.dataset.model;
-  });
-});
+const BASE_PATH = "http://127.0.0.1:8000/api";
 
 // Filter tabs
 document.querySelectorAll(".filter-tab").forEach((tab) => {
@@ -37,31 +25,8 @@ async function analyzeNews() {
     document.querySelector(".loading").classList.add("active");
     document.querySelector(".results-section").classList.remove("active");
 
-    if (!selectedModel) {
-      console.log("You haven't selected a model");
-      return;
-    }
-
-    // Set model
-    const res = await fetch(`${BASE_PATH}/set_model`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model_name: selectedModel,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
-    console.log("Set model response:", data);
-
-    // Get predictions
-    const res2 = await fetch(`${BASE_PATH}/predict`, {
+    // Get predictions from FinBERT
+    const res = await fetch(`${BASE_PATH}/predict`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,24 +36,29 @@ async function analyzeNews() {
       }),
     });
 
-    if (!res2.ok) {
-      throw new Error(`HTTP error! status: ${res2.status}`);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
 
-    const data2 = await res2.json();
-    console.log("Prediction response:", data2);
+    const data = await res.json();
+    console.log("Prediction response:", data);
+
+    if (data.data.length === 0) {
+      alert("Tidak ada berita ditemukan untuk ticker ini");
+      document.querySelector(".loading").classList.remove("active");
+      return;
+    }
 
     // Transform API response to match our display format
     const transformedData = {
       ticker: ticker,
-      model: selectedModel,
-      news: data2.data.map((item) => ({
+      model: "finbert",
+      news: data.data.map((item) => ({
         title: item.headline,
         sentiment: item.sentiment.toLowerCase(),
-        importance:
-          item.importance === "non-major"
-            ? "minor"
-            : item.importance.toLowerCase(),
+        sentiment_score: item.sentiment_score,
+        importance: item.importance === "important" ? "major" : "minor",
+        importance_score: item.importance_score,
         source: item.source,
       })),
     };
@@ -208,15 +178,21 @@ function displayNewsList(news, filter = "all") {
             <div class="news-labels">
                 <div class="label-item">
                     <span class="label-title">Sentiment:</span>
-                    <span class="badge badge-${
-                      item.sentiment
-                    }">${item.sentiment.toUpperCase()}</span>
+                    <span class="badge badge-${item.sentiment}">
+                        ${item.sentiment.toUpperCase()}
+                        <span class="badge-score">${
+                          item.sentiment_score
+                        }%</span>
+                    </span>
                 </div>
                 <div class="label-item">
                     <span class="label-title">Importance:</span>
-                    <span class="badge badge-${
-                      item.importance
-                    }">${item.importance.toUpperCase()}</span>
+                    <span class="badge badge-${item.importance}">
+                        ${item.importance.toUpperCase()}
+                        <span class="badge-score">${
+                          item.importance_score
+                        }%</span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -248,12 +224,21 @@ function exportJSON() {
 function exportCSV() {
   if (!currentData) return;
 
-  const headers = ["Title", "Source", "Sentiment", "Importance"];
+  const headers = [
+    "Title",
+    "Source",
+    "Sentiment",
+    "Sentiment Score (%)",
+    "Importance",
+    "Importance Score (%)",
+  ];
   const rows = currentData.news.map((item) => [
     item.title,
     item.source,
     item.sentiment,
+    item.sentiment_score,
     item.importance,
+    item.importance_score,
   ]);
 
   let csvContent = headers.join(",") + "\n";
