@@ -49,7 +49,6 @@ async function analyzeNews() {
       return;
     }
 
-    // Transform API response to match our display format
     const transformedData = {
       ticker: ticker,
       model: "finbert",
@@ -63,13 +62,10 @@ async function analyzeNews() {
       })),
     };
 
-    // Calculate summary
     transformedData.summary = calculateSummary(transformedData.news);
 
-    // Store current data
     currentData = transformedData;
 
-    // Display results
     displayResults(transformedData);
 
     document.querySelector(".loading").classList.remove("active");
